@@ -158,6 +158,12 @@ The framework supports generating HTML reports with `pytest-html` and collecting
 
 Because the project uses a public API, test results may be affected by network availability, API downtime, rate limiting, or changes in remote test data.
 
+### Sample Test Execution Report
+
+[View Sample API Test Execution Report](reports/sample_api_test_report.html)
+
+The report contains the results of an actual test run of this API automation framework.
+
 ## Design Principles
 
 - Reusable API request methods
