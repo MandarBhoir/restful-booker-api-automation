@@ -1,7 +1,10 @@
+
 import pytest
 
 
+@pytest.mark.smoke
 def test_create_auth_token(api_client):
+    """Smoke test: verify that the API can generate an auth token."""
 
     payload = {
         "username": "admin",
@@ -49,6 +52,7 @@ def test_create_auth_token(api_client):
     ]
 )
 def test_invalid_authentication(api_client, payload):
+    """Verify that invalid credentials do not generate an auth token."""
 
     response = api_client.post(
         "/auth",

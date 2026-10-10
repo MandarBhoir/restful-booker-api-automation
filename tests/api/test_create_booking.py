@@ -1,3 +1,4 @@
+
 import pytest
 
 from tests.test_data.booking_data import get_booking_data
@@ -7,7 +8,9 @@ from tests.test_data.booking_data import get_booking_data
 # Positive Scenarios
 # ============================================================
 
+@pytest.mark.smoke
 def test_create_booking(api_client):
+    """Smoke test: verify that a booking can be created successfully."""
 
     booking_data = get_booking_data()
 
@@ -118,7 +121,7 @@ def test_create_booking_missing_required_field(api_client, field):
         json=booking_data
     )
 
-    # Restful Booker rejects these requests.
+    # Restful Booker behavior for missing required fields.
     assert response.status_code != 200
 
 
@@ -239,7 +242,9 @@ def test_create_booking_response_contains_booking_object(api_client):
     assert isinstance(response_data["booking"], dict)
 
 
+@pytest.mark.sanity
 def test_create_booking_response_matches_request(api_client):
+    """Sanity test: verify that the created booking matches the request."""
 
     booking_data = get_booking_data()
 

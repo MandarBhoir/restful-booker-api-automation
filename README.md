@@ -26,7 +26,8 @@ The framework uses reusable API utilities, centralized configuration, shared tes
 | `booking_helper.py` | Centralizes reusable booking operations. |
 | `conftest.py` | Provides shared Pytest fixtures, including the API client and authentication token. |
 | `booking_data.py` | Stores reusable booking data and provides a function to return a fresh copy. |
-| `tests/api/` | Contains API test cases organized by functionality. |
+| `pytest.ini` | Registers custom Pytest markers for smoke and sanity test suites. |
+| `tests/api/` | Contains API test cases organized by functionality, including demonstrations of Pytest markers. |
 
 ## Project Structure
 
@@ -35,6 +36,8 @@ restful-booker-api-automation/
 ├── config/
 │   └── settings.ini
 ├── reports/
+│   ├── sample_api_test_report.html
+│   └── allure-results/             # Generated when Allure results are collected
 ├── tests/
 │   ├── api/
 │   │   ├── test_auth.py
@@ -43,7 +46,8 @@ restful-booker-api-automation/
 │   │   ├── test_get_booking.py
 │   │   ├── test_update_booking.py
 │   │   ├── test_patch_booking.py
-│   │   └── test_delete_booking.py
+│   │   ├── test_delete_booking.py
+│   │   └── test_pytest_markers.py
 │   ├── test_data/
 │   │   └── booking_data.py
 │   └── conftest.py
@@ -53,6 +57,7 @@ restful-booker-api-automation/
 │   └── config_manager.py
 ├── .gitignore
 ├── LICENSE
+├── pytest.ini
 ├── README.md
 └── requirements.txt
 ```
@@ -71,6 +76,8 @@ The test suite includes scenarios covering:
 - Invalid inputs and booking IDs
 - Authentication-related negative scenarios
 - Booking lifecycle and response validation
+- Smoke and sanity test selection using Pytest markers
+- Demonstrations of expected failures and skipped tests
 
 ## Prerequisites
 
@@ -134,13 +141,68 @@ Run the booking creation tests:
 python -m pytest tests/api/test_create_booking.py -v
 ```
 
-Generate an HTML report:
+## Pytest Markers
+
+The framework demonstrates Pytest markers for organizing test execution and handling tests with special execution requirements.
+
+| Marker | Purpose |
+|---|---|
+| `smoke` | Selects critical API health checks. |
+| `sanity` | Selects focused tests for core functionality after changes. |
+| `skip` | Skips a test with a documented reason. |
+| `xfail` | Marks a test as an expected failure. With `strict=True`, an unexpected pass is reported as a failure. |
+
+### Run the Smoke Suite
+
+```bash
+python -m pytest -m smoke -v
+```
+
+The current smoke suite includes authentication token generation and booking creation.
+
+### Run the Sanity Suite
+
+```bash
+python -m pytest -m sanity -v
+```
+
+The current sanity suite validates that a created booking matches the request data.
+
+### Run the Marker Demonstrations
+
+```bash
+python -m pytest tests/api/test_pytest_markers.py -v
+```
+
+The demonstration file contains:
+- A test skipped intentionally with a documented reason.
+- A test marked as an expected failure.
+
+These are examples of Pytest marker behavior, not claims of actual defects in the Restful Booker API.
+
+### Run Tests by Marker and Module
+
+Run only smoke tests in a specific module:
+
+```bash
+python -m pytest tests/api/test_create_booking.py -m smoke -v
+```
+
+Run only sanity tests in a specific module:
+
+```bash
+python -m pytest tests/api/test_create_booking.py -m sanity -v
+```
+
+## Test Reports
+
+### Generate an HTML Report
 
 ```bash
 python -m pytest --html=reports/report.html --self-contained-html
 ```
 
-Generate an Allure results directory:
+### Generate an Allure Results Directory
 
 ```bash
 python -m pytest --alluredir=reports/allure-results
@@ -152,17 +214,15 @@ Viewing an Allure report requires the Allure command-line tool to be installed:
 allure serve reports/allure-results
 ```
 
-## Test Reports
-
-The framework supports generating HTML reports with `pytest-html` and collecting Allure results with `allure-pytest`.
-
-Because the project uses a public API, test results may be affected by network availability, API downtime, rate limiting, or changes in remote test data.
-
 ### Sample Test Execution Report
 
 [View Sample API Test Execution Report](reports/sample_api_test_report.html)
 
 The report contains the results of an actual test run of this API automation framework.
+
+The framework supports generating HTML reports with `pytest-html` and collecting Allure results with `allure-pytest`.
+
+Because the project uses a public API, test results may be affected by network availability, API downtime, rate limiting, or changes in remote test data.
 
 ## Design Principles
 
@@ -172,6 +232,7 @@ The report contains the results of an actual test run of this API automation fra
 - Parameterized tests where appropriate
 - Clear response and status-code assertions
 - Maintainable test organization
+- Marker-based test selection for smoke and sanity suites
 
 ## Future Improvements
 
